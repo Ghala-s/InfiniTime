@@ -1,6 +1,7 @@
 #include "components/motion/MotionController.h"
 
 #include <task.h>
+#include <cmath>
 
 #include "utility/Math.h"
 
@@ -36,6 +37,11 @@ namespace {
 }
 
 void MotionController::Update(int16_t x, int16_t y, int16_t z, uint32_t nbSteps) {
+// added for acceleration
+latestX = x;
+latestY = y;
+latestZ = z;
+
   if (this->nbSteps != nbSteps && service != nullptr) {
     service->OnNewStepCountValue(nbSteps);
   }
@@ -91,6 +97,15 @@ MotionController::AccelStats MotionController::GetAccelStats() const {
   stats.zVariance /= AccelStats::numHistory;
 
   return stats;
+}
+
+//added for orientation
+float MotionController::GetPitch() const {
+  return atan2f((float)-latestX, sqrtf((float)(latestY * latestY + latestZ * latestZ))) * 180.0f / M_PI;
+}
+
+float MotionController::GetRoll() const {
+  return atan2f((float)latestY, (float)latestZ) * 180.0f / M_PI;
 }
 
 bool MotionController::ShouldRaiseWake() const {

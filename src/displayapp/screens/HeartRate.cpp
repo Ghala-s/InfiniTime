@@ -28,8 +28,9 @@ namespace {
   }
 }
 
-HeartRate::HeartRate(Controllers::HeartRateController& heartRateController, System::SystemTask& systemTask)
-  : heartRateController {heartRateController}, wakeLock(systemTask) {
+HeartRate::HeartRate(Controllers::HeartRateController& heartRateController, Controllers::MotionController& motionController, System::SystemTask& systemTask)
+  : heartRateController {heartRateController}, motionController {motionController}, wakeLock(systemTask) {
+
   bool isHrRunning = heartRateController.State() != Controllers::HeartRateController::States::Stopped;
   label_hr = lv_label_create(lv_scr_act(), nullptr);
 
@@ -73,7 +74,18 @@ HeartRate::~HeartRate() {
   lv_task_del(taskRefresh);
   lv_obj_clean(lv_scr_act());
 }
+void HeartRate::Refresh() {
+  float pitch = motionController.GetPitch();
+  float roll = motionController.GetRoll();
 
+  // Display orientation instead of heart rate
+  lv_label_set_text_fmt(label_hr, "Pitch: %.1f°\nRoll: %.1f°", pitch, roll);
+  lv_label_set_text_static(label_status, "Orientation");
+  lv_obj_align(label_status, label_hr, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
+}
+
+// delete the health rate
+/**
 void HeartRate::Refresh() {
 
   auto state = heartRateController.State();
@@ -94,7 +106,7 @@ void HeartRate::Refresh() {
   lv_label_set_text_static(label_status, ToString(state));
   lv_obj_align(label_status, label_hr, LV_ALIGN_OUT_BOTTOM_MID, 0, 10);
 }
-
+*/
 void HeartRate::OnStartStopEvent(lv_event_t event) {
   if (event == LV_EVENT_CLICKED) {
     if (heartRateController.State() == Controllers::HeartRateController::States::Stopped) {

@@ -6,6 +6,7 @@
 #include "systemtask/SystemTask.h"
 #include "systemtask/WakeLock.h"
 #include "Symbols.h"
+#include "components/motion/MotionController.h"
 #include <lvgl/src/lv_core/lv_style.h>
 #include <lvgl/src/lv_core/lv_obj.h>
 
@@ -19,8 +20,9 @@ namespace Pinetime {
 
       class HeartRate : public Screen {
       public:
-        HeartRate(Controllers::HeartRateController& HeartRateController, System::SystemTask& systemTask);
+        HeartRate(Controllers::HeartRateController& HeartRateController, Controllers::MotionController& motionController, System::SystemTask& systemTask);
         ~HeartRate() override;
+
 
         void Refresh() override;
 
@@ -28,6 +30,7 @@ namespace Pinetime {
 
       private:
         Controllers::HeartRateController& heartRateController;
+        Controllers::MotionController& motionController;
         Pinetime::System::WakeLock wakeLock;
         void UpdateStartStopButton(bool isRunning);
         lv_obj_t* label_hr;
@@ -46,7 +49,7 @@ namespace Pinetime {
       static constexpr const char* icon = Screens::Symbols::heartBeat;
 
       static Screens::Screen* Create(AppControllers& controllers) {
-        return new Screens::HeartRate(controllers.heartRateController, *controllers.systemTask);
+        return new Screens::HeartRate(controllers.heartRateController, controllers.motionController, *controllers.systemTask);
       };
     };
   }

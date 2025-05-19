@@ -50,7 +50,11 @@ void Motion::Refresh() {
   lv_chart_set_next(chart, ser2, motionController.Y());
   lv_chart_set_next(chart, ser3, motionController.Z());
 
-  lv_label_set_text_fmt(labelStep, "Steps %lu", motionController.NbSteps());
+
+  //lv_label_set_text_fmt(labelStep, "Steps %lu", motionController.NbSteps()); (deleted steps)
+  // Display the acceleration instead of steps
+  lv_label_set_text_fmt(labelStep, "Acceleration (%d,%d,%d)", motionController.latestX, motionController.latestY, motionController.latestZ);
+
 
   lv_label_set_text_fmt(label,
                         "X #FF0000 %d# Y #00B000 %d# Z #FFFF00 %d# mg",

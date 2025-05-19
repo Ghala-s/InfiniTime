@@ -17,6 +17,10 @@ namespace Pinetime {
         BMA421,
         BMA425,
       };
+      int16_t latestX = 0;
+      int16_t latestY = 0;
+      int16_t latestZ = 0;
+
 
       void Update(int16_t x, int16_t y, int16_t z, uint32_t nbSteps);
 
@@ -31,6 +35,10 @@ namespace Pinetime {
       int16_t Z() const {
         return zHistory[0];
       }
+
+      //added
+      float GetPitch() const;
+      float GetRoll() const;
 
       uint32_t NbSteps() const {
         return nbSteps;
